@@ -148,4 +148,9 @@ export class ServiceService {
       limit,
     };
   }
+
+  async deleteService(serviceId: string): Promise<boolean> {
+    const result = await Service.findByIdAndDelete(serviceId);
+    return !!result;
+  }
 }

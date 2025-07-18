@@ -1,4 +1,4 @@
-import type { ServiceResponseDto } from 'features/services/dto/service.dto.ts';
+import { ServiceResponseDto } from './service.dto.ts';
 
 export interface createSlotDto {
   startTime: Date;
@@ -19,6 +19,7 @@ export interface SlotResponseDto {
   startTime: Date;
   endTime: Date;
   isBooked: boolean;
+  isExpired: boolean; // Optional field to indicate if the slot is expired
 }
 export interface SlotListResponseDto {
   slots: SlotResponseDto[];

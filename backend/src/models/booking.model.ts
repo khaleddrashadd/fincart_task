@@ -6,10 +6,11 @@ export interface IBooking extends Document {
   providerId: string;
   serviceId: string;
   slotId: string;
-  bookingDate: Date;
   status: 'confirmed' | 'cancelled';
   reminderSent: boolean;
   reminderSentAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
   toJSON: () => Omit<IBooking, '_id' | '__v'>;
 }
 
@@ -25,12 +26,11 @@ const BookingSchema: Schema = new Schema(
     // Time Slot relationship (One-to-One: TimeSlot -> Booking)
     slotId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'slot',
+      ref: 'Slot',
       required: true,
       unique: true, // Ensures one booking per time slot
     },
 
-    bookingDate: { type: Date, required: true },
     status: {
       type: String,
       enum: ['confirmed', 'cancelled'],
@@ -48,8 +48,15 @@ const BookingSchema: Schema = new Schema(
   }
 );
 
-BookingSchema.pre<IBooking>('save', function (next) {
+BookingSchema.pre<IBooking>('save', async function (next) {
   this.updatedAt = new Date();
+  const Slot = mongoose.model('Slot');
+  const slot = await Slot.findById(this.slotId);
+  if (!slot) {
+    return next(new Error('Associated slot not found'));
+  }
+  slot.isBooked = true;
+  await slot.save();
   next();
 });
 

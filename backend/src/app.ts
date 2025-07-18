@@ -7,6 +7,7 @@ import authRouter from './routes/auth.routes.js';
 import servicesRouter from './routes/service.routes.js';
 import slotRouter from './routes/slot.routes.js';
 import bookingsRouter from './routes/booking.routes.js';
+import adminRouter from './routes/admin.routes.js';
 
 const app: Express = express();
 
@@ -24,5 +25,6 @@ app.use('/', authRouter);
 app.use('/', servicesRouter);
 app.use('/', slotRouter);
 app.use('/', bookingsRouter);
+app.use('/', adminRouter);
 
 export default app;

@@ -11,7 +11,7 @@ export interface IUser extends Document {
   createdAt: Date;
   updatedAt: Date;
   comparePassword: (candidatePassword: string) => Promise<boolean>;
-  toJSON: () => Omit<IUser, 'password'>;
+  toJSON: () => Omit<IUser, 'password' | '_id' | '__v'>;
 }
 
 const UserSchema: Schema = new Schema(

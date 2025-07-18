@@ -38,6 +38,7 @@ export class SlotService {
       isBooked: slot.isBooked,
       provider,
       service,
+      isExpired: slot.endTime < new Date(),
     };
   }
 
@@ -75,6 +76,7 @@ export class SlotService {
       isBooked: slot.isBooked,
       provider,
       service,
+      isExpired: slot.endTime < new Date(),
     };
   }
 
@@ -101,15 +103,23 @@ export class SlotService {
       isBooked: slot.isBooked,
       provider,
       service,
+      isExpired: slot.endTime < new Date(),
     };
   }
 
   async listSlots(
     providerId: string,
+    serviceId?: string,
     page: number = 1,
     limit: number = 10
   ): Promise<SlotListResponseDto> {
-    const slots = await Slot.find({ providerId })
+    const query = Slot.find({ providerId });
+
+    if (serviceId) {
+      query.where('serviceId').equals(serviceId);
+    }
+
+    const slots = await query
       .populate('providerId', 'firstName lastName')
       .populate('serviceId', 'title description duration price')
       .skip((page - 1) * limit)
@@ -132,6 +142,7 @@ export class SlotService {
         isBooked: slot.isBooked,
         provider,
         service,
+        isExpired: slot.endTime < new Date(),
       };
     });
 
@@ -145,5 +156,50 @@ export class SlotService {
   async deleteSlot(slotId: string): Promise<boolean> {
     const result = await Slot.findByIdAndDelete(slotId);
     return !!result;
+  }
+
+  async mySlots(
+    providerId: string,
+    limit: number = 10,
+    page: number = 1,
+    isBooked: boolean | undefined = false
+  ) {
+    let query = Slot.find({ providerId });
+    if (isBooked !== undefined) {
+      query = query.where('isBooked').equals(isBooked);
+    }
+    const slots = await query
+      .populate('providerId', 'firstName lastName')
+      .populate('serviceId', 'title description duration price')
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    const total = await Slot.countDocuments({ providerId });
+
+    const formattedSlots: SlotResponseDto[] = slots.map((slot) => {
+      if (!slot.providerId || !slot.serviceId) {
+        throw new Error('Provider or Service not found for slot');
+      }
+
+      const provider = slot.providerId as any;
+      const service = slot.serviceId as any;
+
+      return {
+        id: slot.id.toString(),
+        startTime: slot.startTime,
+        endTime: slot.endTime,
+        isBooked: slot.isBooked,
+        provider,
+        service,
+        isExpired: slot.endTime < new Date(),
+      };
+    });
+
+    return {
+      slots: formattedSlots,
+      total,
+      page,
+      limit,
+    };
   }
 }

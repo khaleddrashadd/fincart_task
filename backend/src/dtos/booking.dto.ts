@@ -1,5 +1,5 @@
-import type { ServiceResponseDto } from 'features/services/dto/service.dto.ts';
-import type { SlotResponseDto } from 'features/slots/dto/slot.dto.ts';
+import { ServiceResponseDto } from './service.dto.ts';
+import { SlotResponseDto } from './slot.dto.ts';
 
 export interface createBookingDto {
   userId: string;
@@ -17,13 +17,10 @@ export interface BookingResponseDto {
   userId: string;
   service: ServiceResponseDto;
   slot: SlotResponseDto;
-  bookingDate: Date;
   status: 'confirmed' | 'cancelled';
-  reminderSent: boolean;
-  reminderSentAt?: Date;
 }
 export interface BookingListResponseDto {
-  bookings: BookingResponseDto[];
+  bookings: Omit<BookingResponseDto, 'slot' | 'service'>[];
   total: number;
   page: number;
   limit: number;
