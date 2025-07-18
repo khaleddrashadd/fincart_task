@@ -4,13 +4,12 @@ import type {
   AuthResponseDto,
   LoginDto,
   RegisterDto,
-} from '../dto/auth.dto.ts';
+} from '../dtos/auth.dto.ts';
 
 export class AuthService {
   private generateToken(userId: string): string {
-    return jwt.sign({ id: userId }, process.env.JWT_SECRET || '123', {
-      expiresIn: process.env.JWT_EXPIRES_IN || '7d',
-    });
+    const secret = process.env.JWT_SECRET || '123';
+    return jwt.sign({ id: userId }, secret, { expiresIn: '7d' });
   }
 
   async register(registerData: RegisterDto): Promise<AuthResponseDto> {
@@ -23,19 +22,14 @@ export class AuthService {
     const token = this.generateToken(user.id.toString());
 
     return {
-      user: {
-        id: user.id.toString(),
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        role: user.role,
-      },
+      success: true,
       token,
     };
   }
 
   async login(loginData: LoginDto): Promise<AuthResponseDto> {
     const user = await User.findOne({ email: loginData.email });
+
     if (!user) {
       throw new Error('Invalid email or password');
     }
@@ -48,13 +42,7 @@ export class AuthService {
     const token = this.generateToken(user.id.toString());
 
     return {
-      user: {
-        id: user.id.toString(),
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        role: user.role,
-      },
+      success: true,
       token,
     };
   }

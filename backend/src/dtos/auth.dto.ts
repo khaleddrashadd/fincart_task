@@ -13,12 +13,6 @@ export interface LoginDto {
 }
 
 export interface AuthResponseDto {
-  user: {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    role: string;
-  };
-  token: string;
+  success: boolean;
+  token?: string;
 }

@@ -1,5 +1,5 @@
 import type mongoose from 'mongoose';
-import type { LoginDto, RegisterDto } from '../dto/auth.dto.ts';
+import type { LoginDto, RegisterDto } from '../dtos/auth.dto.ts';
 import type { IUser } from '../models/user.model.ts';
 
 export type AuthService = {

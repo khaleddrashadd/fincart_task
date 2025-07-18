@@ -10,7 +10,11 @@
     "lint": "bun run eslint . --ext .ts,.js"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bcrypt": "^5.0.2",
+    "@types/bun": "latest",
+    "@types/cookie-parser": "^1.4.9",
+    "@types/cors": "^2.8.19",
+    "@types/jsonwebtoken": "^9.0.10"
   },
   "peerDependencies": {
     "typescript": "^5.8.3"

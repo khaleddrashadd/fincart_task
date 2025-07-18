@@ -1,5 +1,5 @@
-import { connectDatabase } from 'shared/database/connection.ts';
 import app from './app.ts';
+import { connectDatabase } from './config/connection.ts';
 
 const startServer = async () => {
   //connect to database or perform other startup tasks here

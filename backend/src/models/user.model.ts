@@ -2,7 +2,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 import bcrypt from 'bcrypt';
 
 export interface IUser extends Document {
-  id: string;
+  _id: string;
   email: string;
   password: string;
   firstName: string;
@@ -16,7 +16,7 @@ export interface IUser extends Document {
 
 const UserSchema: Schema = new Schema(
   {
-    id: { type: Schema.Types.ObjectId, auto: true },
+    _id: { type: Schema.Types.ObjectId, auto: true },
     email: {
       type: String,
       required: true,
@@ -44,8 +44,7 @@ UserSchema.pre('save', async function (next) {
 
   try {
     const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    console.log('error');
+    this.password = await bcrypt.hash(this.password as string, salt);
     next();
   } catch (error: any) {
     next(error);
@@ -58,6 +57,8 @@ UserSchema.methods.comparePassword = async function (
 };
 UserSchema.methods.toJSON = function () {
   const user = this.toObject();
+  user.id = user._id; // Add id field
+  delete user._id; // Remove _id field
   delete user.password;
   return user;
 };

@@ -1,0 +1,149 @@
+import type {
+  createSlotDto,
+  SlotListResponseDto,
+  SlotResponseDto,
+  updateSlotDto,
+} from '../dtos/slot.dto.ts';
+import { Slot } from '../models/slot.model.ts';
+
+export class SlotService {
+  async createSlot(
+    providerId: string,
+    slotData: createSlotDto
+  ): Promise<SlotResponseDto> {
+    const slot = await Slot.create({
+      ...slotData,
+      providerId,
+    });
+
+    const populatedSlot = await Slot.findById(slot._id)
+      .populate('providerId', 'firstName lastName')
+      .populate('serviceId', 'title description duration price');
+
+    if (
+      !populatedSlot ||
+      !populatedSlot.providerId ||
+      !populatedSlot.serviceId
+    ) {
+      throw new Error('Provider or Service not found');
+    }
+
+    const provider = populatedSlot.providerId as any;
+    const service = populatedSlot.serviceId as any;
+
+    return {
+      id: slot.id,
+      startTime: slot.startTime,
+      endTime: slot.endTime,
+      isBooked: slot.isBooked,
+      provider,
+      service,
+    };
+  }
+
+  async updateSlot(
+    slotId: string,
+    updateData: updateSlotDto
+  ): Promise<SlotResponseDto | null> {
+    const slot = await Slot.findByIdAndUpdate(slotId, updateData, {
+      new: true,
+    });
+
+    if (!slot) {
+      return null;
+    }
+
+    const populatedSlot = await Slot.findById(slot._id)
+      .populate('providerId', 'firstName lastName')
+      .populate('serviceId', 'title description duration price');
+
+    if (
+      !populatedSlot ||
+      !populatedSlot.providerId ||
+      !populatedSlot.serviceId
+    ) {
+      throw new Error('Provider or Service not found');
+    }
+
+    const provider = populatedSlot.providerId as any;
+    const service = populatedSlot.serviceId as any;
+
+    return {
+      id: slot.id.toString(),
+      startTime: slot.startTime,
+      endTime: slot.endTime,
+      isBooked: slot.isBooked,
+      provider,
+      service,
+    };
+  }
+
+  async getSlotById(slotId: string): Promise<SlotResponseDto | null> {
+    const slot = await Slot.findById(slotId)
+      .populate('providerId', 'firstName lastName')
+      .populate('serviceId', 'title description duration price');
+
+    if (!slot) {
+      return null;
+    }
+
+    if (!slot.providerId || !slot.serviceId) {
+      throw new Error('Provider or Service not found');
+    }
+
+    const provider = slot.providerId as any;
+    const service = slot.serviceId as any;
+
+    return {
+      id: slot.id.toString(),
+      startTime: slot.startTime,
+      endTime: slot.endTime,
+      isBooked: slot.isBooked,
+      provider,
+      service,
+    };
+  }
+
+  async listSlots(
+    providerId: string,
+    page: number = 1,
+    limit: number = 10
+  ): Promise<SlotListResponseDto> {
+    const slots = await Slot.find({ providerId })
+      .populate('providerId', 'firstName lastName')
+      .populate('serviceId', 'title description duration price')
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    const total = await Slot.countDocuments({ providerId });
+
+    const formattedSlots: SlotResponseDto[] = slots.map((slot) => {
+      if (!slot.providerId || !slot.serviceId) {
+        throw new Error('Provider or Service not found for slot');
+      }
+
+      const provider = slot.providerId as any;
+      const service = slot.serviceId as any;
+
+      return {
+        id: slot.id.toString(),
+        startTime: slot.startTime,
+        endTime: slot.endTime,
+        isBooked: slot.isBooked,
+        provider,
+        service,
+      };
+    });
+
+    return {
+      slots: formattedSlots,
+      total,
+      page,
+      limit,
+    };
+  }
+  async deleteSlot(slotId: string): Promise<boolean> {
+    const result = await Slot.findByIdAndDelete(slotId);
+    return !!result;
+  }
+}
