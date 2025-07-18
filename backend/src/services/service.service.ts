@@ -109,22 +109,17 @@ export class ServiceService {
   }
 
   async listServices(
-    providerId: string,
     page: number = 1,
     limit: number = 10
   ): Promise<ServiceListResponseDto> {
-    const services = await Service.find({ providerId })
+    const services = await Service.find()
       .populate('providerId', 'firstName lastName')
       .skip((page - 1) * limit)
       .limit(limit);
 
-    const total = await Service.countDocuments({ providerId });
+    const total = await Service.countDocuments();
 
     const formattedServices: ServiceResponseDto[] = services.map((service) => {
-      if (!service.providerId) {
-        throw new Error('Provider not found for service');
-      }
-
       const provider = service.providerId as any;
 
       return {

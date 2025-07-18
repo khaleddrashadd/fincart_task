@@ -25,8 +25,12 @@ export const authorize = async (
     }
 
     //2) verify token
-    const secret = process.env.JWT_SECRET || '123';
-    const decoded = jwt.verify(token, secret) as JwtPayload;
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      res.status(500).json({ message: 'JWT secret not configured' });
+      return;
+    }
+    const decoded = jwt.verify(token, secret) as unknown as JwtPayload;
 
     //3) check if user still exist in db
     const freshUser = await User.findById(decoded.id).select('+password');

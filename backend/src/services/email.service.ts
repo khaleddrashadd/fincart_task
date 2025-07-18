@@ -18,12 +18,12 @@ class EmailService {
   constructor() {
     // Configure your email provider here
     this.transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST || 'sandbox.smtp.mailtrap.io',
-      port: Number(process.env.EMAIL_PORT) || 587,
+      host: process.env.EMAIL_HOST,
+      port: Number(process.env.EMAIL_PORT),
       secure: false, // true for 465, false for other ports
       auth: {
-        user: process.env.EMAIL_USER || 'deae50a440fbdf',
-        pass: process.env.EMAIL_PASS || 'fc39400b3de6fb',
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
       },
       tls: {
         ciphers: 'SSLv3',
@@ -51,7 +51,7 @@ class EmailService {
       console.log(user.email, 'tooooooooooooo');
 
       const mailOptions = {
-        from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+        from: process.env.EMAIL_FROM,
         to: user.email,
         subject: `Reminder: Your appointment is in 30 minutes`,
         html: `

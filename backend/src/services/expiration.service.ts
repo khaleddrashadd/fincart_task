@@ -11,7 +11,7 @@ class ReminderService {
 
   private initCronJob() {
     // Run every 10 minutes to check for appointments
-    cron.schedule('*/10 * * * * *', async () => {
+    cron.schedule('*/10 * * * *', async () => {
       if (this.isRunning) return;
 
       this.isRunning = true;

@@ -13,7 +13,10 @@ const app: Express = express();
 
 app.use(
   cors({
-    credentials: true,
+    origin: 'http://localhost:3000', // Your frontend's origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   })
 );
 

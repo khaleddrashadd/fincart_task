@@ -9,8 +9,8 @@ const startServer = async () => {
   // Test email service configuration on startup
   await reminderService.testEmailService();
 
-  const server = app.listen(8000, () => {
-    console.log('Server is running on http://localhost:8000');
+  const server = app.listen(process.env.PORT, () => {
+    console.log(`Server is running on http://localhost:${process.env.PORT}`);
   });
 
   process.on('SIGTERM', () => {

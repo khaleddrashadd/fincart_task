@@ -94,20 +94,9 @@ export class ServiceController {
 
   listServices = async (req: Request, res: Response): Promise<any> => {
     try {
-      const providerId = req.user?.id;
-      if (!providerId) {
-        return res.status(401).json({
-          success: false,
-          message: 'Unauthorized',
-        });
-      }
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
-      const result = await this.serviceService.listServices(
-        providerId,
-        page,
-        limit
-      );
+      const result = await this.serviceService.listServices(page, limit);
       res.status(200).json({
         success: true,
         data: result,

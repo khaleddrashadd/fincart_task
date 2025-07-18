@@ -7,9 +7,12 @@ import type {
 } from '../dtos/auth.dto.ts';
 
 export class AuthService {
-  private generateToken(userId: string): string {
-    const secret = process.env.JWT_SECRET || '123';
-    return jwt.sign({ id: userId }, secret, { expiresIn: '7d' });
+  private generateToken(userId: string, role: string): string {
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      throw new Error('JWT_SECRET environment variable is not set');
+    }
+    return jwt.sign({ id: userId, role }, secret, { expiresIn: '7d' });
   }
 
   async register(registerData: RegisterDto): Promise<AuthResponseDto> {
@@ -19,7 +22,8 @@ export class AuthService {
     }
 
     const user = await User.create(registerData);
-    const token = this.generateToken(user.id.toString());
+
+    const token = this.generateToken(user.id.toString(), registerData.role);
 
     return {
       success: true,
@@ -39,7 +43,7 @@ export class AuthService {
       throw new Error('Invalid email or password');
     }
 
-    const token = this.generateToken(user.id.toString());
+    const token = this.generateToken(user.id.toString(), user.role);
 
     return {
       success: true,

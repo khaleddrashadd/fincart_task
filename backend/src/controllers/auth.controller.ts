@@ -14,14 +14,14 @@ export class AuthController {
     try {
       const registerData: RegisterDto = req.body;
       const result = await this.authService.register(registerData);
-      res.cookie('token', result.token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'none',
-      });
+
       res.status(201).json({
         success: true,
         message: 'User registered successfully',
+        data: {
+          token: result.token,
+          success: true,
+        },
       });
     } catch (error: any) {
       res.status(400).json({
@@ -36,15 +36,12 @@ export class AuthController {
       const loginData: LoginDto = req.body;
       const result = await this.authService.login(loginData);
 
-      res.cookie('token', result.token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'none',
-      });
-
       res.status(200).json({
         success: true,
         message: 'Login successful',
+        data: {
+          token: result.token,
+        },
       });
     } catch (error: any) {
       res.status(401).json({
