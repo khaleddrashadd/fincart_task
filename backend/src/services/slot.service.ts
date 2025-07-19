@@ -108,15 +108,14 @@ export class SlotService {
   }
 
   async listSlots(
-    providerId: string,
     serviceId?: string,
     page: number = 1,
     limit: number = 10
   ): Promise<SlotListResponseDto> {
-    const query = Slot.find({ providerId });
+    let query = Slot.find();
 
     if (serviceId) {
-      query.where('serviceId').equals(serviceId);
+      query = query.where('serviceId').equals(serviceId);
     }
 
     const slots = await query
@@ -125,13 +124,9 @@ export class SlotService {
       .skip((page - 1) * limit)
       .limit(limit);
 
-    const total = await Slot.countDocuments({ providerId });
+    const total = await Slot.countDocuments();
 
     const formattedSlots: SlotResponseDto[] = slots.map((slot) => {
-      if (!slot.providerId || !slot.serviceId) {
-        throw new Error('Provider or Service not found for slot');
-      }
-
       const provider = slot.providerId as any;
       const service = slot.serviceId as any;
 

@@ -96,21 +96,10 @@ export class SlotController {
   listSlots = async (req: Request, res: Response): Promise<any> => {
     try {
       const serviceId = req.query.serviceId as string;
-      const providerId = req.user?.id;
-      if (!providerId) {
-        return res.status(401).json({
-          success: false,
-          message: 'Unauthorized',
-        });
-      }
+
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
-      const result = await this.slotService.listSlots(
-        providerId,
-        serviceId,
-        page,
-        limit
-      );
+      const result = await this.slotService.listSlots(serviceId, page, limit);
       res.status(200).json({
         success: true,
         data: result,

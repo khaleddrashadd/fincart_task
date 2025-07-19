@@ -1,9 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
+import Slots from '@/pages/Slots'
 
 export const Route = createFileRoute('/(app)/slots/')({
-  component: RouteComponent,
+  component: Slots,
 })
-
-function RouteComponent() {
-  return <div>Hello "/(app)/slots/"!</div>
-}
