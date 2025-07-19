@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { addService } from '../services/addService'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -9,14 +8,28 @@ import { Button } from '@/components/ui/button'
 type AddServiceDialogProps = {
   open: boolean
   setOpen: (open: boolean) => void
+  defaultData?: {
+    title: string
+    price: string
+    duration: string
+    description: string
+    id?: number
+  }
+  mutationFn: (data: any) => Promise<any>
 }
 
-const AddServiceDialog = ({ open, setOpen }: AddServiceDialogProps) => {
+const AddServiceDialog = ({
+  open,
+  setOpen,
+  defaultData,
+  mutationFn,
+}: AddServiceDialogProps) => {
   const [form, setForm] = useState({
-    title: '',
-    price: '',
-    duration: '',
-    description: '',
+    title: defaultData?.title || '',
+    price: defaultData?.price || '',
+    duration: defaultData?.duration || '',
+    description: defaultData?.description || '',
+    id: defaultData?.id || null,
   })
   const queryClient = useQueryClient()
 
@@ -27,10 +40,10 @@ const AddServiceDialog = ({ open, setOpen }: AddServiceDialogProps) => {
   }
 
   const { isPending, mutate, error } = useMutation({
-    mutationFn: addService,
+    mutationFn,
     onSuccess: () => {
       setOpen(false)
-      setForm({ title: '', price: '', duration: '', description: '' })
+      setForm({ title: '', price: '', duration: '', description: '', id: null })
       queryClient.invalidateQueries({ queryKey: ['services'] })
     },
   })
@@ -114,7 +127,7 @@ const AddServiceDialog = ({ open, setOpen }: AddServiceDialogProps) => {
               onClick={handleSubmit}
               disabled={isPending}
             >
-              {isPending ? 'Adding...' : 'Add Service'}
+              {defaultData ? 'Edit Service' : 'Add Service'}
             </Button>
           </>
         </DialogContent>

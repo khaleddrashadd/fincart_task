@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import { useRef } from 'react'
-import { useNavigate } from '@tanstack/react-router'
+import { useRouter } from '@tanstack/react-router'
 import { loginService } from '../services/login'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -9,26 +9,23 @@ import { Label } from '@/components/ui/label'
 const LoginForm = () => {
   const email = useRef<HTMLInputElement>(null)
   const password = useRef<HTMLInputElement>(null)
-  const {
-    isPending,
-    mutateAsync,
-    data: loginData,
-  } = useMutation({
+  const { isPending, mutateAsync } = useMutation({
     mutationFn: loginService,
   })
-  const navigate = useNavigate()
+  const router = useRouter()
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
 
     // Call the login service with email and password
-    await mutateAsync({
+    const loginData = await mutateAsync({
       email: email.current?.value || '',
       password: password.current?.value || '',
     })
+    console.log(loginData)
     localStorage.setItem('token', loginData.token)
 
-    navigate({
+    await router.navigate({
       to: '/service',
       replace: true,
     })

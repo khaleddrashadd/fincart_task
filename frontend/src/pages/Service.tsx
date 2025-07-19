@@ -5,6 +5,7 @@ import ServicesTable from '@/features/services/components/ServicesTable'
 import { useCredential } from '@/store/useCredential'
 import { authorize } from '@/utils/authorize'
 import AddServiceDialog from '@/features/services/components/AddServiceDialog'
+import { addService } from '@/features/services/services/addServiceService'
 
 const Service = () => {
   const { role } = useCredential()
@@ -26,7 +27,7 @@ const Service = () => {
         </CardContent>
       </Card>
 
-      <AddServiceDialog open={open} setOpen={setOpen} />
+      <AddServiceDialog open={open} setOpen={setOpen} mutationFn={addService} />
     </div>
   )
 }

@@ -1,5 +1,6 @@
 import { Outlet } from '@tanstack/react-router'
 import { useEffect } from 'react'
+import Header from './Header'
 import { useCredential } from '@/store/useCredential'
 
 const MainLayout = () => {
@@ -12,9 +13,8 @@ const MainLayout = () => {
 
   return (
     <div>
-      <div>header</div>
+      <Header />
       <Outlet />
-      <div>footer</div>
     </div>
   )
 }

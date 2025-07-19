@@ -13,6 +13,7 @@ import { Route as appRouteRouteImport } from './routes/(app)/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as authRegisterRouteImport } from './routes/(auth)/register'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
+import { Route as appSlotsIndexRouteImport } from './routes/(app)/slots/index'
 import { Route as appServiceIndexRouteImport } from './routes/(app)/service/index'
 import { Route as appServiceIdRouteImport } from './routes/(app)/service/$id'
 
@@ -35,6 +36,11 @@ const authLoginRoute = authLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const appSlotsIndexRoute = appSlotsIndexRouteImport.update({
+  id: '/slots/',
+  path: '/slots/',
+  getParentRoute: () => appRouteRoute,
+} as any)
 const appServiceIndexRoute = appServiceIndexRouteImport.update({
   id: '/service/',
   path: '/service/',
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof authRegisterRoute
   '/service/$id': typeof appServiceIdRoute
   '/service': typeof appServiceIndexRoute
+  '/slots': typeof appSlotsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof appRouteRouteWithChildren
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   '/register': typeof authRegisterRoute
   '/service/$id': typeof appServiceIdRoute
   '/service': typeof appServiceIndexRoute
+  '/slots': typeof appSlotsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -68,12 +76,19 @@ export interface FileRoutesById {
   '/(auth)/register': typeof authRegisterRoute
   '/(app)/service/$id': typeof appServiceIdRoute
   '/(app)/service/': typeof appServiceIndexRoute
+  '/(app)/slots/': typeof appSlotsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register' | '/service/$id' | '/service'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/service/$id'
+    | '/service'
+    | '/slots'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register' | '/service/$id' | '/service'
+  to: '/' | '/login' | '/register' | '/service/$id' | '/service' | '/slots'
   id:
     | '__root__'
     | '/'
@@ -82,6 +97,7 @@ export interface FileRouteTypes {
     | '/(auth)/register'
     | '/(app)/service/$id'
     | '/(app)/service/'
+    | '/(app)/slots/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -121,6 +137,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(app)/slots/': {
+      id: '/(app)/slots/'
+      path: '/slots'
+      fullPath: '/slots'
+      preLoaderRoute: typeof appSlotsIndexRouteImport
+      parentRoute: typeof appRouteRoute
+    }
     '/(app)/service/': {
       id: '/(app)/service/'
       path: '/service'
@@ -141,11 +164,13 @@ declare module '@tanstack/react-router' {
 interface appRouteRouteChildren {
   appServiceIdRoute: typeof appServiceIdRoute
   appServiceIndexRoute: typeof appServiceIndexRoute
+  appSlotsIndexRoute: typeof appSlotsIndexRoute
 }
 
 const appRouteRouteChildren: appRouteRouteChildren = {
   appServiceIdRoute: appServiceIdRoute,
   appServiceIndexRoute: appServiceIndexRoute,
+  appSlotsIndexRoute: appSlotsIndexRoute,
 }
 
 const appRouteRouteWithChildren = appRouteRoute._addFileChildren(
